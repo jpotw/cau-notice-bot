@@ -23,3 +23,13 @@
 - main.py: 메인 함수
 - bot_service.py: 텔레그램 봇 관련 함수
 - notice_check.py: 공지사항(api) 확인 함수
+
+## 배포 방법
+
+1. GCP Cloud Functions에 배포
+   - `check_cau_notices` 함수 배포
+   - `check_library_notices` 함수 배포
+   - 각 함수의 런타임 환경변수에 `.env` 파일의 내용 설정
+
+2. Cloud Scheduler 설정
+   - CAU 공지사항, 학술정보원 공지사항: 매일 08:00에 실행 (크론: `0 8 * * *`)
