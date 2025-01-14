@@ -45,22 +45,9 @@ def check_school_notices(cau_website_url: str, cau_api_url: str) -> List[Dict[st
     
     return notices
 
-def check_library_notices(library_api_url: str) -> List[Dict[str, str]]:
+def check_library_notices(library_website_url: str, library_api_url: str) -> List[Dict[str, str]]:
     try:
-        headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-            'Accept': 'application/json',
-            'X-Requested-With': 'XMLHttpRequest'
-        }
-        
-        params = {
-            'nameOption': '',
-            'isSeq': 'false',
-            'onlyWriter': 'false',
-            'max': 10
-        }
-
-        res = requests.get(library_api_url, params=params, headers=headers, timeout=10)
+        res = requests.get(library_api_url, timeout=10)
         res.raise_for_status()
         data = res.json()
         
@@ -76,7 +63,8 @@ def check_library_notices(library_api_url: str) -> List[Dict[str, str]]:
                         notices.append({
                             'title': notice.get('title', ''),
                             'post_date': notice['dateCreated'],
-                            'category': '도서관'
+                            'category': '도서관',
+                            'url': f"{library_website_url}/{notice['id']}"
                         })
                 
                 except Exception as e:

@@ -24,6 +24,7 @@ class CrawlingTest(unittest.TestCase):
         self.chat_id = os.getenv('TELEGRAM_CHAT_ID')
         self.cau_website_url = os.getenv('CAU_WEBSITE_URL')
         self.cau_api_url = os.getenv('CAU_API_URL')
+        self.library_website_url = os.getenv('CAU_LIBRARY_WEBSITE_URL')
         self.library_api_url = os.getenv('CAU_LIBRARY_API_URL')
 
     def test_school_notices(self):
@@ -48,6 +49,7 @@ class CrawlingTest(unittest.TestCase):
     def test_library_notices(self):
         try:
             notices = check_library_notices(
+                self.library_website_url,
                 self.library_api_url
             )
         
@@ -69,6 +71,7 @@ class CrawlingTest(unittest.TestCase):
         cau_website_url = os.getenv('CAU_WEBSITE_URL')
         cau_api_url = os.getenv('CAU_API_URL')
         library_api_url = os.getenv('CAU_LIBRARY_API_URL')
+        library_website_url = os.getenv('CAU_LIBRARY_WEBSITE_URL')
         
         school_notices = check_school_notices(cau_website_url, cau_api_url)
         if school_notices:
@@ -88,7 +91,7 @@ class CrawlingTest(unittest.TestCase):
                 assert 'BOARD_SEQ=4' in notice['url']
                 assert 'BBS_SEQ=' in notice['url']
         
-        library_notices = check_library_notices(library_api_url)
+        library_notices = check_library_notices(library_website_url, library_api_url)
         if library_notices:
             for notice in library_notices:
                 assert isinstance(notice, dict)
@@ -98,6 +101,9 @@ class CrawlingTest(unittest.TestCase):
                 assert notice['category'] == '도서관'
                 assert isinstance(notice['title'], str)
                 assert isinstance(notice['post_date'], str)
+                assert isinstance(notice['url'], str)
+                assert notice['url'].startswith(library_website_url)
+                assert 'id' in notice['url']
 
 if __name__ == '__main__':
     unittest.main()
