@@ -1,4 +1,5 @@
 # CAU Notice Bot v.0.1.0
+![cau_notice_bot_logo](cau_notice_bot_logo.png)
 
 중앙대학교 공지사항 알림 텔레그램 봇
 
