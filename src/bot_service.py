@@ -69,16 +69,7 @@ def initialize_bot() -> BotConfig:
     )
 
 
-async def send_message_to_telegram(bot, chat_id, text):
-    """텔레그램으로 메시지 전송"""
-    await bot.send_message(
-        chat_id=chat_id,
-        text=text,
-        parse_mode='HTML'
-    )
-
-
-async def send_notices_message(config, all_notices: List[Dict]):
+async def send_message_to_telegram(config, all_notices: List[Dict]):
     """텔레그램으로 공지사항 메시지 전송"""
     if all_notices:
         message = "<b>📢 새로운 공지사항이 있습니다.</b>\n\n"

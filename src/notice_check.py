@@ -4,10 +4,16 @@ from datetime import date, datetime
 import requests
 from urllib.parse import urlencode
 from typing import Tuple
+from datetime import timezone, timedelta
 
 """
 functions for checking notices from the CAU API
 """
+
+def get_korea_date():
+    """Get current date in Korea (KST)"""
+    kst = timezone(timedelta(hours=9))
+    return datetime.now(kst).date()
 
 def check_cau_notices(cau_website_url: str, cau_api_url: str) -> List[Dict[str, str]]:
     params = {
@@ -19,12 +25,13 @@ def check_cau_notices(cau_website_url: str, cau_api_url: str) -> List[Dict[str, 
     res.raise_for_status()
     
     data = res.json()
-    today = date.today()
+    today = get_korea_date()
     
     notices = []
     for notice in data.get('data', {}).get('list', []):
         try:
             post_date = datetime.strptime(notice['WRITE_DT'].split('.')[0], '%Y-%m-%d %H:%M:%S').date()
+            
             if today == post_date:
                 url_params = {
                     'MENU_ID': '100',
@@ -53,7 +60,7 @@ def check_library_notices(library_website_url: str, library_api_url: str) -> Lis
         res.raise_for_status()
         data = res.json()
         
-        today = date.today()
+        today = get_korea_date()
         
         notices = []
         if data.get('success') and data.get('data', {}).get('list'):
