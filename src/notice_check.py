@@ -2,12 +2,13 @@ from typing import List, Dict
 import logging
 from datetime import date, datetime
 import requests
+from urllib.parse import urlencode
 
 """
 functions for checking notices from the CAU API
 """
 
-def check_school_notices(cau_notice_url: str, cau_api_url: str) -> List[Dict[str, str]]:
+def check_school_notices(cau_website_url: str, cau_api_url: str) -> List[Dict[str, str]]:
     params = {
         'SITE_NO': '2',
         'BOARD_SEQ': '4'
@@ -24,10 +25,19 @@ def check_school_notices(cau_notice_url: str, cau_api_url: str) -> List[Dict[str
         try:
             post_date = datetime.strptime(notice['WRITE_DT'].split('.')[0], '%Y-%m-%d %H:%M:%S').date()
             if today == post_date:
+                url_params = {
+                    'MENU_ID': '100',
+                    'CONTENTS_NO': '1',
+                    'SITE_NO': '2',
+                    'BOARD_SEQ': '4',
+                    'BBS_SEQ': notice.get('BBS_SEQ', '')
+                }
+                notice_url = f"{cau_website_url}?{urlencode(url_params)}"
                 notices.append({
                     'title': notice.get('SUBJECT', ''),
                     'post_date': notice['WRITE_DT'],
-                    'category': '학교'
+                    'category': '학교',
+                    'url': notice_url
                 })
         except Exception as e:
             logging.error(f"개별 공지사항 처리 중 오류 발생: {str(e)}")

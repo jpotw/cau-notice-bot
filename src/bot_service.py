@@ -21,8 +21,8 @@ def get_secret(secret_id: str) -> str:
 class BotConfig:
     bot: telegram.Bot
     chat_id: str
-    notice_url: str
-    notice_api_url: str
+    cau_website_url: str
+    cau_api_url: str
     library_api_url: str
 
 
@@ -33,13 +33,13 @@ def initialize_bot() -> BotConfig:
     return BotConfig(
         bot=bot,
         chat_id=get_secret('TELEGRAM_CHAT_ID'),
-        notice_url=get_secret('CAU_NOTICE_URL'),
-        notice_api_url=get_secret('CAU_API_URL'),
+        cau_website_url=get_secret('CAU_WEBSITE_URL'),
+        cau_api_url=get_secret('CAU_API_URL'),
         library_api_url=get_secret('CAU_LIBRARY_API_URL')
     )
 
 
-def create_notice_feed(title: str, post_date: str, notice_url: str = None, category: str = None) -> str:
+def create_notice_feed(title: str, post_date: str, cau_website_url: str = None, category: str = None) -> str:
     if category == '도서관':
         feed = (f"📚 도서관 새로운 공지사항\n\n"
                f"[{category}]\n{title}\n\n"
@@ -48,16 +48,16 @@ def create_notice_feed(title: str, post_date: str, notice_url: str = None, categ
         feed = (f"📢 새로운 공지사항입니다.\n\n"
                f"{title}\n\n"
                f"📅 게시일: {post_date}")
-        if notice_url:
-            feed += f"\n\n🔗 링크: {notice_url}"
+        if cau_website_url:
+            feed += f"\n\n🔗 링크: {cau_website_url}"
     
     logging.info(feed)
     return feed
 
 
 def send_notice(bot: telegram.Bot, chat_id: str, title: str, post_date: str, 
-                notice_url: str = None, category: str = None) -> None:
-    feed = create_notice_feed(title, post_date, notice_url, category)
+                cau_website_url: str = None, category: str = None) -> None:
+    feed = create_notice_feed(title, post_date, cau_website_url, category)
     
     bot.send_message(
         text=feed,
