@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "chungang-univ-notice-bot"
+name = "cau-notice-bot"
 version = "0.1.0"
 description = "Chung Ang University Notice Bot"
 authors = ["Junu Park <junupark1@cau.ac.kr>"]
