@@ -7,6 +7,7 @@ from google.cloud import secretmanager
 from src.notice_check import check_notices
 from src.bot_service import initialize_bot_local, initialize_bot, send_notices_message
 from typing import Dict, Any
+import asyncio
 
 async def main_local(request: Any) -> Dict[str, Any]:
     """로컬 테스트용 엔드포인트"""
@@ -58,3 +59,7 @@ async def main_cron(request):
             'statusCode': 500,
             'body': f'오류가 발생했습니다: {str(e)}'
         }
+
+def gcp_cron(request):
+    """Cloud Functions entry point that wraps the async function"""
+    return asyncio.run(main_cron(request))
