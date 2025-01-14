@@ -22,6 +22,7 @@ def main(request: Any) -> Dict[str, Any]:
             config.cau_api_url
         )
         library_notices = check_library_notices(
+            config.library_website_url,
             config.library_api_url
         )
         

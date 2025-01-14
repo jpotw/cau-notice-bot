@@ -39,25 +39,25 @@ def initialize_bot() -> BotConfig:
     )
 
 
-def create_notice_feed(title: str, post_date: str, cau_website_url: str = None, category: str = None) -> str:
+def create_notice_feed(title: str, post_date: str, url: str = None, category: str = None) -> str:
     if category == '도서관':
         feed = (f"📚 도서관 새로운 공지사항\n\n"
                f"[{category}]\n{title}\n\n"
-               f"📅 게시일: {post_date}")
+               f"📅 게시일: {post_date}\n\n"
+               f"🔗 링크: {url}")
     else:
         feed = (f"📢 새로운 공지사항입니다.\n\n"
                f"{title}\n\n"
-               f"📅 게시일: {post_date}")
-        if cau_website_url:
-            feed += f"\n\n🔗 링크: {cau_website_url}"
+               f"📅 게시일: {post_date}"
+               f"🔗 링크: {url}")
     
     logging.info(feed)
     return feed
 
 
 def send_notice(bot: telegram.Bot, chat_id: str, title: str, post_date: str, 
-                cau_website_url: str = None, category: str = None) -> None:
-    feed = create_notice_feed(title, post_date, cau_website_url, category)
+                cau_website_url: str = None, category: str = None, library_website_url: str = None) -> None:
+    feed = create_notice_feed(title, post_date, cau_website_url, category, library_website_url)
     
     bot.send_message(
         text=feed,
