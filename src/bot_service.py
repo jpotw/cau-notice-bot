@@ -6,6 +6,7 @@ import os
 from dataclasses import dataclass
 from typing import Dict, Any, List
 from dotenv import load_dotenv
+from google.auth import default
 
 load_dotenv()
 
@@ -13,11 +14,19 @@ load_dotenv()
 functions for interacting with the Telegram bot and handling secrets
 """
 
+def get_project_id() -> str:
+    """Get project ID from environment or Google Cloud metadata"""
+    project_id = os.getenv('PROJECT_ID')
+    if not project_id:
+        _, project_id = default()
+    return project_id
+
 def get_secret(secret_id: str) -> str:
     client = secretmanager.SecretManagerServiceClient()
-    name = f"projects/{os.environ['PROJECT_ID']}/secrets/{secret_id}/versions/latest"
+    project_id = get_project_id()
+    name = f"projects/{project_id}/secrets/{secret_id}/versions/latest"
     response = client.access_secret_version(request={"name": name})
-    return response.payload.data.decode("UTF-8")
+    return response.payload.data.decode("UTF-8").strip()
     
 
 @dataclass
