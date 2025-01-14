@@ -5,7 +5,7 @@ import requests
 import time
 from google.cloud import secretmanager
 from src.notice_check import check_notices
-from src.bot_service import initialize_bot_local, initialize_bot, send_notices_message
+from src.bot_service import initialize_bot_local, initialize_bot, send_message_to_telegram
 from typing import Dict, Any
 import asyncio
 
@@ -18,7 +18,7 @@ async def main_local(request: Any) -> Dict[str, Any]:
         cau_notices, library_notices = check_notices(config)
         all_notices = cau_notices + library_notices
         
-        await send_notices_message(config, all_notices)
+        await send_message_to_telegram(config, all_notices)
         
         return {
             'statusCode': 200,
@@ -42,7 +42,7 @@ async def main_cron(request):
         cau_notices, library_notices = check_notices(config)
         all_notices = cau_notices + library_notices
         
-        await send_notices_message(config, all_notices)
+        await send_message_to_telegram(config, all_notices)
         
         return {
             'statusCode': 200,
