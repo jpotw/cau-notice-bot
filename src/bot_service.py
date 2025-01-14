@@ -26,7 +26,7 @@ def get_secret(secret_id: str) -> str:
     project_id = get_project_id()
     name = f"projects/{project_id}/secrets/{secret_id}/versions/latest"
     response = client.access_secret_version(request={"name": name})
-    return response.payload.data.decode("UTF-8")
+    return response.payload.data.decode("UTF-8").strip()
     
 
 @dataclass
