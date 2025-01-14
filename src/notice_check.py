@@ -3,28 +3,17 @@ import logging
 from datetime import date, datetime
 import requests
 
+"""
+functions for checking notices from the CAU API
+"""
 
 def check_school_notices(cau_notice_url: str, cau_api_url: str) -> List[Dict[str, str]]:
     params = {
-        'pageNo': '1',
-        'MENU_ID': '100',
         'SITE_NO': '2',
-        'BOARD_SEQ': '4',
-        'P_TAB_NO': '',
-        'TAB_NO': '',
-        'S_CATE_SEQ': '',
-        'S_KEY': '',
-        'S_SUBJECT': ''
+        'BOARD_SEQ': '4'
     }
     
-    headers = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-        'X-Requested-With': 'XMLHttpRequest',
-        'Referer': f'{cau_notice_url}',
-        'Accept': 'application/json, text/javascript, */*; q=0.01'
-    }
-    
-    res = requests.get(cau_api_url, params=params, headers=headers)
+    res = requests.get(cau_api_url, params=params)
     res.raise_for_status()
     
     data = res.json()

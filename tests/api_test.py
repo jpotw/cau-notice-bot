@@ -1,6 +1,6 @@
 import unittest
 from unittest.mock import Mock, patch
-from src.notice_service import (
+from src.notice_check import (
     check_school_notices,
     check_library_notices
 )
