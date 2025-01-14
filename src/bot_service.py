@@ -6,6 +6,9 @@ import os
 from dataclasses import dataclass
 from typing import Dict, Any
 
+"""
+functions for interacting with the Telegram bot and handling secrets
+"""
 
 def get_secret(secret_id: str) -> str:
     client = secretmanager.SecretManagerServiceClient()

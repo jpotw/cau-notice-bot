@@ -1,6 +1,6 @@
-# CAU Notice Bot
+# CAU Notice Bot v.0.1.0
 
-중앙대학교 공지사항 알림 텔레그램 봇입니다.
+중앙대학교 공지사항 알림 텔레그램 봇
 
 ## 기능
 
@@ -16,3 +16,10 @@
 - Google Cloud Secret Manager
 - Telegram Bot API
 - BeautifulSoup4
+
+
+## src 폴더 구조
+
+- main.py: 메인 함수
+- bot_service.py: 텔레그램 봇 관련 함수
+- notice_check.py: 공지사항(api) 확인 함수

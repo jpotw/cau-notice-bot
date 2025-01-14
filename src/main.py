@@ -4,12 +4,15 @@ from datetime import date, datetime
 import requests
 import time
 from google.cloud import secretmanager
-from notice_service import check_school_notices, check_library_notices
+from src.notice_check import check_school_notices, check_library_notices
 from bot_service import initialize_bot, send_notice
 from typing import Dict, Any
 
+"""
+orchestrates the main logic of the application
+"""
 
-def check_notices(request: Any) -> Dict[str, Any]:
+def main(request: Any) -> Dict[str, Any]:
     logging.basicConfig(level=logging.INFO)
     
     try:
