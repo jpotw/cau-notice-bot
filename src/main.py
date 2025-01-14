@@ -18,8 +18,8 @@ def main(request: Any) -> Dict[str, Any]:
     try:
         config = initialize_bot()
         school_notices = check_school_notices(
-            config.notice_url, 
-            config.notice_api_url
+            config.cau_website_url, 
+            config.cau_api_url
         )
         library_notices = check_library_notices(
             config.library_api_url
