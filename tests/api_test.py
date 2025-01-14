@@ -22,22 +22,21 @@ class CrawlingTest(unittest.TestCase):
         self.bot.send_message = Mock(side_effect=print_message)
         
         self.chat_id = os.getenv('TELEGRAM_CHAT_ID')
-        self.cau_url = os.getenv('CAU_NOTICE_URL')
-        self.library_url = os.getenv('CAU_LIBRARY_NOTICE_URL')
+        self.cau_website_url = os.getenv('CAU_WEBSITE_URL')
         self.cau_api_url = os.getenv('CAU_API_URL')
         self.library_api_url = os.getenv('CAU_LIBRARY_API_URL')
 
     def test_school_notices(self):
         try:
             notices = check_school_notices(
-                self.cau_url,
+                self.cau_website_url,
                 self.cau_api_url
             )
             
             self.assertIsInstance(notices, list)
             if notices:
                 self.assertTrue(all(isinstance(notice, dict) for notice in notices))
-                required_fields = {'title', 'post_date', 'category'}
+                required_fields = {'title', 'post_date', 'category', 'url'}
                 for notice in notices:
                     self.assertTrue(all(field in notice for field in required_fields),
                                  f"필수 필드 누락: {required_fields - set(notice.keys())}")
@@ -63,6 +62,42 @@ class CrawlingTest(unittest.TestCase):
             
         except Exception as e:
             self.fail(f"도서관 공지사항 크롤링 실패: {str(e)}")
+
+    def test_notice_format(self):
+        load_dotenv()
+        
+        cau_website_url = os.getenv('CAU_WEBSITE_URL')
+        cau_api_url = os.getenv('CAU_API_URL')
+        library_api_url = os.getenv('CAU_LIBRARY_API_URL')
+        
+        school_notices = check_school_notices(cau_website_url, cau_api_url)
+        if school_notices:
+            for notice in school_notices:
+                assert isinstance(notice, dict)
+                assert 'title' in notice
+                assert 'post_date' in notice
+                assert 'category' in notice
+                assert 'url' in notice
+                assert notice['category'] == '학교'
+                assert isinstance(notice['title'], str)
+                assert isinstance(notice['post_date'], str)
+                assert isinstance(notice['url'], str)
+                assert notice['url'].startswith(cau_website_url)
+                assert 'MENU_ID=100' in notice['url']
+                assert 'SITE_NO=2' in notice['url']
+                assert 'BOARD_SEQ=4' in notice['url']
+                assert 'BBS_SEQ=' in notice['url']
+        
+        library_notices = check_library_notices(library_api_url)
+        if library_notices:
+            for notice in library_notices:
+                assert isinstance(notice, dict)
+                assert 'title' in notice
+                assert 'post_date' in notice
+                assert 'category' in notice
+                assert notice['category'] == '도서관'
+                assert isinstance(notice['title'], str)
+                assert isinstance(notice['post_date'], str)
 
 if __name__ == '__main__':
     unittest.main()
