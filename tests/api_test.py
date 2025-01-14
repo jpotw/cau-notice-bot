@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import Mock, patch
 from src.notice_check import (
-    check_school_notices,
+    check_cau_notices,
     check_library_notices
 )
 from dotenv import load_dotenv
@@ -29,7 +29,7 @@ class CrawlingTest(unittest.TestCase):
 
     def test_school_notices(self):
         try:
-            notices = check_school_notices(
+            notices = check_cau_notices(
                 self.cau_website_url,
                 self.cau_api_url
             )
@@ -73,15 +73,15 @@ class CrawlingTest(unittest.TestCase):
         library_api_url = os.getenv('CAU_LIBRARY_API_URL')
         library_website_url = os.getenv('CAU_LIBRARY_WEBSITE_URL')
         
-        school_notices = check_school_notices(cau_website_url, cau_api_url)
-        if school_notices:
-            for notice in school_notices:
+        cau_notices = check_cau_notices(cau_website_url, cau_api_url)
+        if cau_notices:
+            for notice in cau_notices:
                 assert isinstance(notice, dict)
                 assert 'title' in notice
                 assert 'post_date' in notice
                 assert 'category' in notice
                 assert 'url' in notice
-                assert notice['category'] == '학교'
+                assert notice['category'] == 'CAU 공지'
                 assert isinstance(notice['title'], str)
                 assert isinstance(notice['post_date'], str)
                 assert isinstance(notice['url'], str)
@@ -98,7 +98,7 @@ class CrawlingTest(unittest.TestCase):
                 assert 'title' in notice
                 assert 'post_date' in notice
                 assert 'category' in notice
-                assert notice['category'] == '도서관'
+                assert notice['category'] == '학술정보원 공지'
                 assert isinstance(notice['title'], str)
                 assert isinstance(notice['post_date'], str)
                 assert isinstance(notice['url'], str)
