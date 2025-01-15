@@ -1,6 +1,6 @@
 from typing import List, Dict
 import logging
-from datetime import date, datetime
+from datetime import datetime
 import requests
 from urllib.parse import urlencode
 from typing import Tuple
@@ -10,10 +10,23 @@ from datetime import timezone, timedelta
 functions for checking notices from the CAU API
 """
 
-def get_korea_date():
-    """Get current date in Korea (KST)"""
+def get_korea_datetime():
+    """Get current datetime in Korea (KST)"""
     kst = timezone(timedelta(hours=9))
-    return datetime.now(kst).date()
+    return datetime.now(kst)
+
+def is_notice_in_time_range(notice_datetime: datetime) -> bool:
+    """
+    Check if the notice is posted between yesterday 8:01 AM and today 8:00 AM
+    """
+    now = get_korea_datetime()
+    yesterday = now - timedelta(days=1)
+    
+    # yesterday 8:00 AM ~ today 8:00 AM
+    start_time = yesterday.replace(hour=8, minute=0, second=0, microsecond=0)
+    end_time = now.replace(hour=8, minute=0, second=0, microsecond=0)
+    
+    return start_time <= notice_datetime <= end_time
 
 def check_cau_notices(cau_website_url: str, cau_api_url: str) -> List[Dict[str, str]]:
     params = {
@@ -25,14 +38,14 @@ def check_cau_notices(cau_website_url: str, cau_api_url: str) -> List[Dict[str, 
     res.raise_for_status()
     
     data = res.json()
-    today = get_korea_date()
-    
     notices = []
+    
     for notice in data.get('data', {}).get('list', []):
         try:
-            post_date = datetime.strptime(notice['WRITE_DT'].split('.')[0], '%Y-%m-%d %H:%M:%S').date()
+            notice_datetime = datetime.strptime(notice['WRITE_DT'].split('.')[0], '%Y-%m-%d %H:%M:%S')
+            notice_datetime = notice_datetime.replace(tzinfo=timezone(timedelta(hours=9)))
             
-            if today == post_date:
+            if is_notice_in_time_range(notice_datetime):
                 url_params = {
                     'MENU_ID': '100',
                     'CONTENTS_NO': '1',
@@ -41,7 +54,7 @@ def check_cau_notices(cau_website_url: str, cau_api_url: str) -> List[Dict[str, 
                     'BBS_SEQ': notice.get('BBS_SEQ', '')
                 }
                 notice_url = f"{cau_website_url}?{urlencode(url_params)}"
-                display_date = datetime.strptime(notice['WRITE_DT'].split('.')[0], '%Y-%m-%d %H:%M:%S').strftime('%Y-%m-%d %H:%M')
+                display_date = notice_datetime.strftime('%Y-%m-%d %H:%M')
                 notices.append({
                     'title': notice.get('SUBJECT', ''),
                     'post_date': display_date,
@@ -60,16 +73,15 @@ def check_library_notices(library_website_url: str, library_api_url: str) -> Lis
         res.raise_for_status()
         data = res.json()
         
-        today = get_korea_date()
-        
         notices = []
         if data.get('success') and data.get('data', {}).get('list'):
             for notice in data['data']['list']:
                 try:
-                    post_date = datetime.strptime(notice['dateCreated'], '%Y-%m-%d %H:%M:%S').date()
+                    notice_datetime = datetime.strptime(notice['dateCreated'], '%Y-%m-%d %H:%M:%S')
+                    notice_datetime = notice_datetime.replace(tzinfo=timezone(timedelta(hours=9)))  # KST 적용
                     
-                    if today == post_date:
-                        display_date = datetime.strptime(notice['dateCreated'], '%Y-%m-%d %H:%M:%S').strftime('%Y-%m-%d %H:%M')
+                    if is_notice_in_time_range(notice_datetime):
+                        display_date = notice_datetime.strftime('%Y-%m-%d %H:%M')
                         notices.append({
                             'title': notice.get('title', ''),
                             'post_date': display_date,
@@ -89,7 +101,7 @@ def check_library_notices(library_website_url: str, library_api_url: str) -> Lis
 
 
 def check_notices(config) -> Tuple[List[Dict], List[Dict]]:
-    """공지사항을 체크하고 반환하는 핵심 로직"""
+    """Checks notices from CAU and CAU Library and returns them"""
     cau_notices = check_cau_notices(
         config.cau_website_url,
         config.cau_api_url
