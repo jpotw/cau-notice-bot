@@ -11,3 +11,4 @@ htmlcov/
 .idea/
 tests/
 README.md 
+.cursorignore
