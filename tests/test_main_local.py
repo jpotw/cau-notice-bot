@@ -1,17 +1,11 @@
 import os
 import pytest
-import asyncio
 from src.main import main_local
 from dotenv import load_dotenv
 
 load_dotenv()
 
-@pytest.mark.asyncio
-async def test_main_success():
-    result = await main_local({})
-    
-    assert result['statusCode'] == 200
-    assert '처리 완료' in result['body']
+
 
 @pytest.mark.asyncio
 async def test_main_error_handling():

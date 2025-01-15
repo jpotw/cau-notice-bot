@@ -5,6 +5,9 @@ env/
 venv/
 ENV/
 
+# cursor
+.cursorignore
+
 # Python
 __pycache__/
 *.py[cod]
