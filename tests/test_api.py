@@ -9,7 +9,7 @@ import os
 
 load_dotenv()
 
-class CrawlingTest(unittest.TestCase):
+class ApiTest(unittest.TestCase):
     def setUp(self):
         self.bot = Mock()
         def print_message(**kwargs):
@@ -27,8 +27,12 @@ class CrawlingTest(unittest.TestCase):
         self.library_website_url = os.getenv('CAU_LIBRARY_WEBSITE_URL')
         self.library_api_url = os.getenv('CAU_LIBRARY_API_URL')
 
-    def test_school_notices(self):
+    def test_cau_notices(self):
         try:
+            print(f"\nCAU URLs:")
+            print(f"Website URL: {self.cau_website_url}")
+            print(f"API URL: {self.cau_api_url}")
+            
             notices = check_cau_notices(
                 self.cau_website_url,
                 self.cau_api_url
@@ -48,6 +52,10 @@ class CrawlingTest(unittest.TestCase):
 
     def test_library_notices(self):
         try:
+            print(f"\nLibrary URLs:")
+            print(f"Website URL: {self.library_website_url}")
+            print(f"API URL: {self.library_api_url}")
+            
             notices = check_library_notices(
                 self.library_website_url,
                 self.library_api_url
@@ -104,6 +112,24 @@ class CrawlingTest(unittest.TestCase):
                 assert isinstance(notice['url'], str)
                 assert notice['url'].startswith(library_website_url)
                 assert 'id' in notice['url']
+
+    def test_is_notice_in_chronological_order(self):
+        cau_notices = check_cau_notices(
+            self.cau_website_url,
+            self.cau_api_url
+        )
+        library_notices = check_library_notices(
+            self.library_website_url,
+            self.library_api_url
+        )
+        
+        if cau_notices:
+            for i, notice in enumerate(cau_notices[1:], 1):
+                assert notice['post_date'] >= cau_notices[i-1]['post_date']
+        
+        if library_notices:
+            for i, notice in enumerate(library_notices[1:], 1):
+                assert notice['post_date'] >= library_notices[i-1]['post_date']
 
 if __name__ == '__main__':
     unittest.main()
