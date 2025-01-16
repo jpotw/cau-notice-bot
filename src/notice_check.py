@@ -65,6 +65,7 @@ def check_cau_notices(cau_website_url: str, cau_api_url: str) -> List[Dict[str, 
             logging.error(f"개별 공지사항 처리 중 오류 발생: {str(e)}")
             continue
     
+    notices.sort(key=lambda x: x['post_date'], reverse=True)
     return notices
 
 def check_library_notices(library_website_url: str, library_api_url: str) -> List[Dict[str, str]]:
@@ -92,7 +93,8 @@ def check_library_notices(library_website_url: str, library_api_url: str) -> Lis
                 except Exception as e:
                     logging.error(f"도서관 개별 공지사항 처리 중 오류 발생: {str(e)}")
                     continue
-                    
+                
+        notices.sort(key=lambda x: x['post_date'], reverse=True)
         return notices
         
     except Exception as e:
