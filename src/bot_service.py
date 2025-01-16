@@ -82,10 +82,23 @@ async def send_message_to_telegram(config, all_notices: List[Dict]):
             if notice.get('url'):
                 message += f"링크: <a href='{notice['url']}'>바로가기</a>\n"
             message += "\n"
+        
+        keyboard = [[
+            telegram.InlineKeyboardButton(
+                text="🌈 레인보우 시스템 비교과 프로그램",
+                url="https://rainbow.cau.ac.kr/site/reservation/lecture/lectureList?menuid=001002002&submode=lecture&reservegroupid=1"
+            ),
+            telegram.InlineKeyboardButton(
+                text="🌈 레인보우 시스템 외부 프로그램",
+                url="https://rainbow.cau.ac.kr/site/program/board/basicboard/list?boardtypeid=16&menuid=001002003"
+            )
+        ]]
+        reply_markup = telegram.InlineKeyboardMarkup(keyboard)
                 
         await config.bot.send_message(
             chat_id=config.telegram_chat_id,
             text=message,
             parse_mode='HTML',
             disable_web_page_preview=True,
+            reply_markup=reply_markup
         )
