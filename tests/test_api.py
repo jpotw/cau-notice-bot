@@ -125,11 +125,11 @@ class ApiTest(unittest.TestCase):
         
         if cau_notices:
             for i, notice in enumerate(cau_notices[1:], 1):
-                assert notice['post_date'] <= cau_notices[i-1]['post_date']
+                assert notice['post_date'] >= cau_notices[i-1]['post_date']
         
         if library_notices:
             for i, notice in enumerate(library_notices[1:], 1):
-                assert notice['post_date'] <= library_notices[i-1]['post_date']
+                assert notice['post_date'] >= library_notices[i-1]['post_date']
 
 if __name__ == '__main__':
     unittest.main()
